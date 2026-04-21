@@ -4,6 +4,14 @@ from torch.utils.data import DataLoader, random_split, TensorDataset, Subset
 import torch.nn as nn
 from tqdm import tqdm
 from sklearn.model_selection import train_test_split
+import numpy as np
+
+# Khởi tạo hệ số random cho CPU và GPU
+random_state = 42
+np.random.seed(random_state)
+if torch.cuda.is_available():
+    torch.cuda.manual_seed(random_state)
+
 class BaseMLP(ABC):
     def __init__(self):
         self.Layers = []
@@ -94,9 +102,12 @@ class BaseMLP(ABC):
             self.Val_Loader = DataLoader(self.ValSet,batch_size=Val_size)
             '''
             idxs = range(len(self.dataset))
-            labels = zip(*self.dataset)[1]
+            labels = list(zip(*self.dataset))[1]
             # Tham số stratify=labels sẽ giữ nguyên phân bố của nhãn khi split
-            train_idx, val_idx = train_test_split(idxs, train_size= (1- self.validation_split), stratify=labels)
+            try: 
+                train_idx, val_idx = train_test_split(idxs, train_size= (1- self.validation_split), stratify=labels, shuffle=True ,random_state=random_state)
+            except:
+                train_idx, val_idx = train_test_split(idxs, train_size= (1- self.validation_split), shuffle=True ,random_state=random_state)
             self.TrainSet, self.ValSet = Subset(self.dataset,train_idx), Subset(self.dataset,val_idx)
             self.Val_Loader = DataLoader(self.ValSet,batch_size=len(val_idx))
         else:
