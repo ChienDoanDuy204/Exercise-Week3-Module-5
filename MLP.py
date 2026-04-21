@@ -138,8 +138,8 @@ class BaseMLP(ABC):
                 loss.backward()
 
                 # update weight
-
                 self.optimizer.step()
+                
                 if self.verbose == 1 and batch_count< num_batch:
                     print(f"Batch {batch_count:>4}/{num_batch} - Loss = {loss.item():.4f} - Accuracy = {acc.item():.4f}")
                 
