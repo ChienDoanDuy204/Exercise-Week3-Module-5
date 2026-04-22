@@ -103,8 +103,9 @@ class BaseMLP(ABC):
             '''
             idxs = range(len(self.dataset))
             labels = list(zip(*self.dataset))[1]
-            # Tham số stratify=labels sẽ giữ nguyên phân bố của nhãn khi split
+            # Tham số stratify=labels sẽ giữ nguyên phân bố của nhãn khi split giữa các tập được chia -> phân bố nhãn giữa các tập giống nhau 
             try: 
+                # Split train, test follow index of dataset then use function Subset to split Traindaset and Valdataset
                 train_idx, val_idx = train_test_split(idxs, train_size= (1- self.validation_split), stratify=labels, shuffle=True ,random_state=random_state)
             except:
                 train_idx, val_idx = train_test_split(idxs, train_size= (1- self.validation_split), shuffle=True ,random_state=random_state)
